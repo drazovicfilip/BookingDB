@@ -1,0 +1,29 @@
+CREATE OR REPLACE VIEW v1 AS SELECT COUNT(1), member_id FROM member GROUP BY member_id; 
+
+CREATE OR REPLACE VIEW v2 AS SELECT COUNT(1), member_id FROM athlete GROUP BY member_id; 
+
+CREATE OR REPLACE VIEW v3 AS SELECT COUNT(1), member_id FROM official GROUP BY member_id;
+
+CREATE OR REPLACE VIEW v4 AS SELECT COUNT(1), member_id FROM staff GROUP BY member_id;
+
+CREATE OR REPLACE VIEW v5 AS SELECT place_name, address, gps_lat, gps_long
+, member_id FROM place JOIN member ON (place.place_id = member.accommodation);
+                
+CREATE OR REPLACE VIEW v6 AS SELECT journey_id FROM journey ORDER BY journey_id DESC;
+
+CREATE OR REPLACE VIEW v7 AS SELECT vehicle_code, depart_time::date AS dt, depart_time::time AS tm, to_place, from_place
+, booked_for FROM Booking NATURAL JOIN Journey;
+
+CREATE OR REPLACE VIEW v8 AS SELECT vehicle_code, depart_time::date AS dt, depart_time::time AS tm,
+ P1.place_name AS to, P2.place_name AS frm, given_names, EXTRACT(DAY FROM when_booked)
+ FROM (booking JOIN member ON booked_by = member_id) NATURAL JOIN (journey J JOIN place P1 ON J.to_place = P1.place_id JOIN place P2 on J.from_place = P2.place_id);
+
+CREATE OR REPLACE VIEW v9 AS SELECT vehicle_code, date(depart_time) AS dt, TO_CHAR(EXTRACT(HOUR FROM depart_time), 'FM00') || TO_CHAR(EXTRACT(MINUTE FROM depart_time), 'FM00'), P1.place_name AS to, P2.place_name AS frm, nbooked, capacity
+ FROM (journey J JOIN place P1 ON J.to_place = P1.place_id JOIN place P2 on J.from_place = P2.place_id)
+ NATURAL JOIN vehicle ORDER BY depart_time;
+
+CREATE OR REPLACE VIEW v10 AS SELECT place_id
+, place_name FROM place;
+
+CREATE OR REPLACE VIEW v11 AS SELECT location_id
+, name FROM location; 
